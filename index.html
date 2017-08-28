@@ -1,59 +1,184 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body ng-app="directoryApp">
-    <div class="container">
-      <div class="row">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body ng-app="directoryApp">
+
+        <!-- Photo Gallery -->
+        <section class="slide-wrapper">
+            <div class="container">
+                <div id="myCarousel" class="carousel slide">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#myCarousel" data-slide-to="1"></li>
+
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+                        <div class="item item1 active">
+                            <div class="fill" style=" background-color:#48c3af;">
+                                <div class="inner-content">
+                                    <div class="carousel-img">
+                                        <img src="http://questions.ufl.edu/wp-content/uploads/2012/11/halls1-600x210.jpg" style="width:100%;
+                                             height:200px;" class="img img-responsive" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item item2">
+                            <div class="fill" style="background-color:#b33f4a;">
+                                <div class="inner-content">
+                                    <div class="carousel-img">
+                                        <img src="http://questions.ufl.edu/wp-content/uploads/2012/11/game1-600x210.jpg" style="width:100%;
+                                             height:200px;" class="img img-responsive" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row">
         <h1>UF Directory App</h1>
-      </div>
-      <div class="row" ng-controller="ListingsController">
+    </div>
+    <div class="row" ng-controller="ListingsController">
         <div class="col-md-6">
-          <div class="input-group" id="searchBar">
+            <div class="input-group" id="searchBar">
+                <!-- 
+    
+                    Implement a way to filter through listings using the search bar 
+    
+                -->
+                <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-search"></span></span>
+                <input type="text" class="form-control" placeholder="Search" ng-model="searchQuery">
+            </div>
+            <div class="tableWrapper">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th>Code</th>
+                        <th>Building Name</th>
+                        <th></th>
+                    </tr>
+                    <!-- 
+                        Fill in the rest of the table:
+                            * populate the rows with the code and name of each listing
+                            * include a way to remove individual listings
+      
+                    -->
+                    <tr ng-repeat = "entry in listings| filter : {name: searchQuery } track by $index" ng-click = "showDetails(entry)" >
+                        <td> {{entry.code}}</td>
+                        <td> {{entry.name}}</td>
+                        <td>
+
+                            <button type="button" class="btn btn-default btn-sm btn-danger" ng-click = "deleteListing(entry)">
+                                <span class="glyphicon glyphicon-trash"></span> Delete 
+                            </button>
+
+                        </td>
+                    </tr> 
+                </table>
+            </div>
             <!-- 
-
-                Implement a way to filter through listings using the search bar 
-
-              -->
-            <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-search"></span></span>
-            <input type="text" class="form-control" placeholder="Search">
-          </div>
-          <div class="tableWrapper">
-            <table class="table table-striped table-hover">
-              <tr>
-                <th>Code</th>
-                <th>Building Name</th>
-                <th></th>
-              </tr>
-              <!-- 
-
-                  Fill in the rest of the table:
-                      * populate the rows with the code and name of each listing
-                      * include a way to remove individual listings
-
-                --> 
-            </table>
-          </div>
-          <!-- 
-
-              Write an HTML form that adds new listings to the directory 
-
+  
+                Write an HTML form that adds new listings to the directory 
+  
             -->
+            <h2>Add New Listings</h2>
+            <form ng-submit="addListing()" ng-controller="ListingsController">
+
+
+                <label>Code:</label>
+                <input type = 'text' class="form-control" ng-model = "newCode" required>
+                <label>Name:</label>
+                <input type = 'text' class="form-control" ng-model = "newName" required> 
+                <label>Latitude:</label>
+                <input type = 'number' class="form-control" ng-model ="newLatitude" required> 
+                <label>Longitude:</label>
+                <input type = 'number' class="form-control" ng-model="newLongitude" required> 
+                <label>Address:</label>
+                <input type = 'text' class="form-control" ng-model = "newAddress" required> <br>
+
+                <button type="submit" id="submit" class="btn btn-default btn-primary" ng-click = "deleteListing(entry)">
+                    <span class="glyphicon glyphicon-plus"></span> Add 
+                </button>
+
+            </form>
+
         </div>
         <div class="col-md-6">
-          <div class="jumbotron">
-            <h2>Detailed Information</h2>
-            <!-- 
+            <div class="jumbotron">
+                <h2>Detailed Information</h2>
+                <!-- 
+    
+                  Include a way to display detailed information about an individual listing:
+                       * consider how to use ng-click within the the table to implement this feature
+    
+                -->
+                <div class ="table-responsive">
+                    <table class="table table-condensed table-responsive">
+                        <tr ng-show="detailedInfo.code">
+                            <td>
+                                <strong> Code:</strong>
+                            <td>
+                            <td>
+                                <div  class="text-primary">{{detailedInfo.code}} </div>
+                            <td>
+                        </tr>
+                        <tr ng-show="detailedInfo.name">
+                            <td>
+                                <strong> Building Name:</strong>
+                            <td>
+                            <td>
+                                <div class="text-primary">{{detailedInfo.name}} </div>
+                            <td>
+                        </tr>
 
-              Include a way to display detailed information about an individual listing:
-                   * consider how to use ng-click within the the table to implement this feature
+                        <tr ng-show="detailedInfo.latitude">
+                            <td>
+                                <strong>Latitude:</strong>
+                            <td>
+                            <td>
+                                <div class="text-primary">{{detailedInfo.latitude}} </div>
+                            <td>
+                        </tr>
 
-             -->
-          </div>
+                        <tr ng-show="detailedInfo.longitude">
+                            <td>
+                                <strong> Longitude:</strong>
+                            <td>
+                            <td>
+                                <div  class="text-primary">{{detailedInfo.longitude}} </div>
+                            <td>
+                        </tr>
+
+                        <tr ng-show="detailedInfo.address">
+                            <td>
+                                <strong>Address:</strong>
+                            <td>
+                            <td>
+                                <div  class="text-primary">{{detailedInfo.address}} </div>
+                            <td>
+                        </tr>
+
+
+                    </table>
+                </div>
+
+            </div>
         </div>
-      </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
@@ -61,5 +186,5 @@
     <script src="app.js"></script>
     <script src="listingController.js"></script>
     <script src="listingFactory.js"></script>
-  </body>
+</body>
 </html>
